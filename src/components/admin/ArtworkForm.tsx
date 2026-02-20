@@ -64,28 +64,37 @@ export function ArtworkForm({ initial }: Props) {
 
   async function uploadFile(file: File, type: 'image' | 'pdf') {
     setUploading(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    fd.append('type', type)
-    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-    const data = await res.json()
-    setUploading(false)
-    return data.url as string
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('type', type)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Upload failed')
+      return data.url as string
+    } catch (err: any) {
+      setError(err.message || 'Upload failed')
+      return ''
+    } finally {
+      setUploading(false)
+    }
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     const url = await uploadFile(file, 'image')
-    set('imageUrl', url)
+    if (url) set('imageUrl', url)
   }
 
   async function handlePdfUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     const url = await uploadFile(file, 'pdf')
-    set('digitalFileUrl', url)
-    set('digitalFilename', file.name)
+    if (url) {
+      set('digitalFileUrl', url)
+      set('digitalFilename', file.name)
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {

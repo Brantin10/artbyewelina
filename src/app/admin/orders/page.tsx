@@ -1,6 +1,9 @@
+import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/stripe'
 import Link from 'next/link'
+
+type OrderWithArtwork = Prisma.OrderGetPayload<{ include: { artwork: true } }>
 
 export default async function OrdersPage() {
   const orders = await prisma.order.findMany({
@@ -42,7 +45,7 @@ export default async function OrdersPage() {
                 </tr>
               </thead>
               <tbody>
-                {orders.map((order) => (
+                {orders.map((order: OrderWithArtwork) => (
                   <tr key={order.id} className="border-b border-[#F5EEE3] hover:bg-[#FAF6F0]">
                     <td className="px-6 py-4 font-medium text-[#2C2C2C]">{order.artwork.title}</td>
                     <td className="px-6 py-4">

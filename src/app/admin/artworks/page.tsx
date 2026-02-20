@@ -1,3 +1,4 @@
+import type { Artwork } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/stripe'
 import Link from 'next/link'
@@ -40,7 +41,7 @@ export default async function ArtworksPage() {
                 </tr>
               </thead>
               <tbody>
-                {artworks.map((artwork) => (
+                {artworks.map((artwork: Artwork) => (
                   <tr key={artwork.id} className="border-b border-[#F5EEE3] hover:bg-[#FAF6F0]">
                     <td className="px-6 py-4">
                       <div>

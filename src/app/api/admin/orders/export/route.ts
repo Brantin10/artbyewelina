@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server'
+import type { Prisma } from '@prisma/client'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { toCSV } from '@/lib/csv'
+
+type OrderWithArtwork = Prisma.OrderGetPayload<{ include: { artwork: true } }>
 
 export async function GET() {
   const session = await auth()
@@ -13,7 +16,7 @@ export async function GET() {
     orderBy: { createdAt: 'desc' },
   })
 
-  const rows = orders.map((o) => ({
+  const rows = orders.map((o: OrderWithArtwork) => ({
     id: o.id,
     type: o.type,
     status: o.status,

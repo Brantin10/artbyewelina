@@ -1,3 +1,4 @@
+import type { Artwork } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { ArtworkCard } from '@/components/shop/ArtworkCard'
 
@@ -53,7 +54,7 @@ export default async function ShopPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            {artworks.map((artwork) => (
+            {artworks.map((artwork: Artwork) => (
               <ArtworkCard key={artwork.id} artwork={artwork} />
             ))}
           </div>

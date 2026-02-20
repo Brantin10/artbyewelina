@@ -1,6 +1,9 @@
+import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/stripe'
 import Link from 'next/link'
+
+type OrderWithArtwork = Prisma.OrderGetPayload<{ include: { artwork: true } }>
 
 export default async function AdminDashboard() {
   const [totalOrders, pendingPhysical, totalRevenue, artworkCount] = await Promise.all([
@@ -94,7 +97,7 @@ export default async function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {recentOrders.map((order) => (
+              {recentOrders.map((order: OrderWithArtwork) => (
                 <tr key={order.id} className="border-b border-[#F5EEE3] hover:bg-[#FAF6F0]">
                   <td className="px-6 py-4 text-[#2C2C2C] font-medium">
                     <Link href={`/admin/orders/${order.id}`} className="hover:text-[#C4714A]">

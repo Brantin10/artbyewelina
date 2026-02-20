@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "src/app/api/admin/**": {
+      "maxDuration": 30
+    },
+    "src/app/api/stripe/webhook/route.ts": {
+      "maxDuration": 30
+    }
+  }
+}

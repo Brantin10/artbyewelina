@@ -3,13 +3,18 @@ import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 
 function createPrismaClient() {
+  // Use unpooled for migrations/transactions; fall back to pooler for normal queries
   const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || ''
 
+  // Strip ?sslmode=require — we pass SSL via the pool config instead
+  const cleanUrl = connectionString.replace(/[?&]sslmode=\w+/g, '').replace(/\?$/, '')
+
   const pool = new Pool({
-    connectionString,
+    connectionString: cleanUrl,
     ssl: { rejectUnauthorized: false },
-    connectionTimeoutMillis: 15000,
-    max: 5,
+    connectionTimeoutMillis: 30000,
+    idleTimeoutMillis: 10000,
+    max: 3,
   })
 
   const adapter = new PrismaPg(pool)

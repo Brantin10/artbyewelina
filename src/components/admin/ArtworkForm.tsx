@@ -122,8 +122,14 @@ export function ArtworkForm({ initial }: Props) {
       router.push('/admin/artworks')
       router.refresh()
     } else {
-      const data = await res.json()
-      setError(data.error || 'Something went wrong')
+      let errMsg = `Server error (${res.status})`
+      try {
+        const data = await res.json()
+        errMsg = data.error || errMsg
+      } catch {
+        // response body was empty or not JSON
+      }
+      setError(errMsg)
       setSaving(false)
     }
   }

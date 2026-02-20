@@ -1,6 +1,8 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY || 'placeholder')
+}
 
 const FROM = process.env.EMAIL_FROM || 'noreply@artbyewelina.com'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
@@ -18,7 +20,7 @@ export async function sendDigitalPurchaseEmail({
 }) {
   const downloadUrl = `${BASE_URL}/download/${token}`
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM,
     to,
     subject: `Your download is ready — ${artworkTitle}`,
@@ -78,7 +80,7 @@ export async function sendPhysicalOrderEmail({
   printSize?: string | null
   orderId: string
 }) {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM,
     to,
     subject: `Order confirmed — ${artworkTitle}`,
@@ -138,7 +140,7 @@ export async function sendShippingEmail({
   artworkTitle: string
   trackingNumber: string
 }) {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM,
     to,
     subject: `Your print is on its way! — ${artworkTitle}`,

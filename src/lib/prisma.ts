@@ -2,17 +2,16 @@ import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 function createPrismaClient() {
-  const raw = process.env.DATABASE_URL || ''
-  // PrismaPg does not support sslmode/channel_binding URL params — strip them
+  // Use unpooled URL for direct connections (required for transactions)
+  // Neon sets DATABASE_URL_UNPOOLED automatically
+  const raw = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || ''
   const connectionString = raw
     .replace(/[?&]sslmode=[^&]*/g, '')
     .replace(/[?&]channel_binding=[^&]*/g, '')
-    // Clean up trailing ? or & if params were the only ones
     .replace(/[?&]$/, '')
-  const useSSL = raw.includes('neon.tech') || raw.includes('sslmode=require')
   const adapter = new PrismaPg({
     connectionString,
-    ...(useSSL ? { ssl: { rejectUnauthorized: false } } : {}),
+    ssl: { rejectUnauthorized: false },
   })
   return new PrismaClient({ adapter } as any)
 }

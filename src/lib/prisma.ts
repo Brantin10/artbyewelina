@@ -3,11 +3,17 @@ import { PrismaPg } from '@prisma/adapter-pg'
 
 function createPrismaClient() {
   const raw = process.env.DATABASE_URL || ''
+  // PrismaPg does not support sslmode/channel_binding URL params — strip them
   const connectionString = raw
-    .replace(/[?&]sslmode=require/g, '')
-    .replace(/[?&]channel_binding=require/g, '')
-  const ssl = raw.includes('neon.tech') || raw.includes('sslmode=require')
-  const adapter = new PrismaPg({ connectionString, ssl })
+    .replace(/[?&]sslmode=[^&]*/g, '')
+    .replace(/[?&]channel_binding=[^&]*/g, '')
+    // Clean up trailing ? or & if params were the only ones
+    .replace(/[?&]$/, '')
+  const useSSL = raw.includes('neon.tech') || raw.includes('sslmode=require')
+  const adapter = new PrismaPg({
+    connectionString,
+    ...(useSSL ? { ssl: { rejectUnauthorized: false } } : {}),
+  })
   return new PrismaClient({ adapter } as any)
 }
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { isAdminAuthenticated } from '@/lib/adminAuth'
 import { prisma } from '@/lib/prisma'
 import { toCSV } from '@/lib/csv'
 
@@ -12,8 +12,7 @@ interface OrderWithArtwork {
 }
 
 export async function GET() {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!await isAdminAuthenticated()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const orders = await prisma.order.findMany({
     where: { status: { not: 'PENDING' } },

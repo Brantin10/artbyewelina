@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Artwork {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  story       String?
+  medium      String?
+  year        Int?
+
+  imageUrl    String   @default("")
+  imageWidth  Int?
+  imageHeight Int?
+
+  hasDigital  Boolean  @default(true)
+  hasPhysical Boolean  @default(true)
+
+  digitalPriceCents  Int?
+  physicalPriceCents Int?
+
+  printSizes String?
+
+  digitalFileUrl  String?
+  digitalFilename String?
+
+  isFeatured  Boolean  @default(false)
+  isPublished Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+}
+
+model Order {
+  id                    String   @id @default(cuid())
+  stripeSessionId       String   @unique
+  stripePaymentIntentId String?
+
+  type   String
+  status String @default("PENDING")
+
+  artworkId String
+  artwork   Artwork @relation(fields: [artworkId], references: [id])
+
+  printSize String?
+
+  amountPaidCents Int
+
+  buyerEmail String
+  buyerName  String?
+
+  shippingName    String?
+  shippingLine1   String?
+  shippingLine2   String?
+  shippingCity    String?
+  shippingPostal  String?
+  shippingCountry String?
+  trackingNumber  String?
+  shippedAt       DateTime?
+
+  adminNotes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  downloadTokens DownloadToken[]
+}
+
+model DownloadToken {
+  id      String @id @default(cuid())
+  token   String @unique
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  expiresAt     DateTime
+  downloadCount Int      @default(0)
+  maxDownloads  Int      @default(3)
+  isRevoked     Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+}

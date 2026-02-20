@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server'
-import type { Prisma } from '@prisma/client'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { toCSV } from '@/lib/csv'
 
-type OrderWithArtwork = Prisma.OrderGetPayload<{ include: { artwork: true } }>
+interface OrderWithArtwork {
+  id: string; type: string; status: string; amountPaidCents: number
+  buyerEmail: string; buyerName: string | null; printSize: string | null
+  trackingNumber: string | null; shippedAt: Date | null; createdAt: Date
+  shippingCountry: string | null
+  artwork: { title: string }
+}
 
 export async function GET() {
   const session = await auth()

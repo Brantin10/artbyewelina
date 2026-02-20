@@ -1,9 +1,12 @@
-import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/stripe'
 import Link from 'next/link'
 
-type OrderWithArtwork = Prisma.OrderGetPayload<{ include: { artwork: true } }>
+interface OrderWithArtwork {
+  id: string; type: string; status: string; amountPaidCents: number
+  buyerEmail: string; createdAt: Date
+  artwork: { title: string }
+}
 
 export default async function OrdersPage() {
   const orders = await prisma.order.findMany({

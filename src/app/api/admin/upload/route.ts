@@ -13,10 +13,14 @@ export async function POST(req: NextRequest) {
 
   const filename = `${type}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
 
-  const blob = await put(filename, file, {
-    access: 'public',
-    contentType: file.type,
-  })
-
-  return NextResponse.json({ url: blob.url })
+  try {
+    const blob = await put(filename, file, {
+      access: 'public',
+      contentType: file.type,
+    })
+    return NextResponse.json({ url: blob.url })
+  } catch (err: any) {
+    console.error('[upload] Blob error:', err)
+    return NextResponse.json({ error: err?.message || 'Upload failed' }, { status: 500 })
+  }
 }

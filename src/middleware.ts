@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(req: NextRequest) {
-  const isAdminRoute = req.nextUrl.pathname.startsWith('/admin')
-  const isLoginPage = req.nextUrl.pathname === '/admin/login'
+  const { pathname } = req.nextUrl
+  const isAdminRoute = pathname.startsWith('/admin')
+  const isLoginPage = pathname === '/admin/login'
 
   if (!isAdminRoute) return NextResponse.next()
 
-  // Check for NextAuth session token (works for both JWT strategies)
+  // NextAuth v5 session cookie names
   const token =
     req.cookies.get('__Secure-authjs.session-token')?.value ||
-    req.cookies.get('authjs.session-token')?.value
+    req.cookies.get('authjs.session-token')?.value ||
+    req.cookies.get('next-auth.session-token')?.value ||
+    req.cookies.get('__Secure-next-auth.session-token')?.value
 
   if (!isLoginPage && !token) {
     return NextResponse.redirect(new URL('/admin/login', req.url))

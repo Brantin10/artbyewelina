@@ -26,7 +26,7 @@ export default function AdminLoginPage() {
       setError('Invalid email or password')
       setLoading(false)
     } else {
-      window.location.href = '/admin'
+      window.location.replace('/admin')
     }
   }
 

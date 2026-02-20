@@ -3,7 +3,6 @@ import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 
 function createPrismaClient() {
-  // Prefer unpooled URL (direct connection, supports transactions)
   const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || ''
 
   const pool = new Pool({

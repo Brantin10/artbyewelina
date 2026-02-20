@@ -10,7 +10,7 @@ interface Props {
 
 export async function generateStaticParams() {
   const artworks = await prisma.artwork.findMany({ where: { isPublished: true }, select: { slug: true } })
-  return artworks.map((a) => ({ slug: a.slug }))
+  return artworks.map((a: { slug: string }) => ({ slug: a.slug }))
 }
 
 export async function generateMetadata({ params }: Props) {

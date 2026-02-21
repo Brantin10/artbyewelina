@@ -64,16 +64,19 @@ export function ArtworkForm({ initial }: Props) {
 
   async function uploadFile(file: File, type: 'image' | 'pdf') {
     setUploading(true)
+    setError('')
     try {
       const fd = new FormData()
       fd.append('file', file)
       fd.append('type', type)
       const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Upload failed')
+      let data: any = {}
+      try { data = await res.json() } catch { /* empty body */ }
+      if (!res.ok) throw new Error(data.error || `Upload failed (${res.status})`)
+      if (!data.url) throw new Error('No URL returned from upload')
       return data.url as string
     } catch (err: any) {
-      setError(err.message || 'Upload failed')
+      setError('Image upload failed: ' + (err.message || 'Unknown error'))
       return ''
     } finally {
       setUploading(false)
@@ -192,7 +195,8 @@ export function ArtworkForm({ initial }: Props) {
             disabled={uploading}
             className="block w-full text-sm text-[#8B7D6B] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-[#3D3B7A] file:text-white hover:file:bg-[#2E2C60] file:cursor-pointer"
           />
-          {uploading && <p className="text-xs text-[#8B7D6B] mt-2">Uploading...</p>}
+          {uploading && <p className="text-xs text-[#8B7D6B] mt-2">⏳ Uploading...</p>}
+          {!uploading && form.imageUrl && <p className="text-xs text-green-600 mt-2">✓ Image uploaded successfully</p>}
         </div>
         <div>
           <label className={labelCls}>Or paste image URL</label>

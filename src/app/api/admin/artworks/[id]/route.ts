@@ -47,7 +47,13 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   if (!await isAdminAuthenticated()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  await prisma.artwork.delete({ where: { id } })
-
-  return NextResponse.json({ ok: true })
+  try {
+    // Delete related orders first, then the artwork
+    await prisma.order.deleteMany({ where: { artworkId: id } })
+    await prisma.artwork.delete({ where: { id } })
+    return NextResponse.json({ ok: true })
+  } catch (err: any) {
+    console.error('[delete artwork]', err)
+    return NextResponse.json({ error: err?.message || 'Delete failed' }, { status: 500 })
+  }
 }

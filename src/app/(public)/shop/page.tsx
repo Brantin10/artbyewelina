@@ -1,9 +1,11 @@
-import type { ArtworkWithOrders } from '@/types'
+﻿import type { ArtworkWithOrders } from '@/types'
 import { prisma } from '@/lib/prisma'
 import { ArtworkCard } from '@/components/shop/ArtworkCard'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
-  title: 'Shop — Art by Ewelina',
+  title: 'Shop â€” Art by Ewelina',
   description: 'Browse the full collection of original mixed media artworks by Ewelina.',
 }
 
@@ -50,7 +52,7 @@ export default async function ShopPage() {
         {artworks.length === 0 ? (
           <div className="text-center py-24 text-[#8B7D6B]">
             <p className="text-lg mb-2">No artworks published yet.</p>
-            <p className="text-sm">Check back soon — new works are added regularly.</p>
+            <p className="text-sm">Check back soon â€” new works are added regularly.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">

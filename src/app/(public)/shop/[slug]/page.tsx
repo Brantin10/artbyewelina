@@ -1,24 +1,22 @@
-import { notFound } from 'next/navigation'
+﻿import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/stripe'
 import { PurchaseOptions } from '@/components/shop/PurchaseOptions'
 
+export const dynamic = 'force-dynamic'
+
 interface Props {
   params: Promise<{ slug: string }>
 }
 
-export async function generateStaticParams() {
-  const artworks = await prisma.artwork.findMany({ where: { isPublished: true }, select: { slug: true } })
-  return artworks.map((a: { slug: string }) => ({ slug: a.slug }))
-}
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const artwork = await prisma.artwork.findUnique({ where: { slug } })
   if (!artwork) return {}
   return {
-    title: `${artwork.title} — Art by Ewelina`,
+    title: `${artwork.title} â€” Art by Ewelina`,
     description: artwork.description,
   }
 }

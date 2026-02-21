@@ -1,7 +1,9 @@
-import type { ArtworkWithOrders } from '@/types'
+﻿import type { ArtworkWithOrders } from '@/types'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/stripe'
 import Link from 'next/link'
+
+export const dynamic = 'force-dynamic'
 
 export default async function ArtworksPage() {
   const artworks = await prisma.artwork.findMany({ orderBy: { createdAt: 'desc' } })
@@ -25,7 +27,7 @@ export default async function ArtworksPage() {
         {artworks.length === 0 ? (
           <div className="text-center py-20 text-[#8B7D6B]">
             <p className="text-lg mb-4">No artworks yet.</p>
-            <Link href="/admin/artworks/new" className="text-[#C4714A] hover:underline">Add your first artwork →</Link>
+            <Link href="/admin/artworks/new" className="text-[#C4714A] hover:underline">Add your first artwork â†’</Link>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -56,10 +58,10 @@ export default async function ArtworksPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-[#2C2C2C]">
-                      {artwork.digitalPriceCents ? formatPrice(artwork.digitalPriceCents) : '—'}
+                      {artwork.digitalPriceCents ? formatPrice(artwork.digitalPriceCents) : 'â€”'}
                     </td>
                     <td className="px-6 py-4 text-[#2C2C2C]">
-                      {artwork.physicalPriceCents ? formatPrice(artwork.physicalPriceCents) : '—'}
+                      {artwork.physicalPriceCents ? formatPrice(artwork.physicalPriceCents) : 'â€”'}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex gap-2">

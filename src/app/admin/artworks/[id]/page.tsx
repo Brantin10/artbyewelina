@@ -1,6 +1,8 @@
-import { notFound } from 'next/navigation'
+﻿import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { ArtworkForm } from '@/components/admin/ArtworkForm'
+
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ id: string }>

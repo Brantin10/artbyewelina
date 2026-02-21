@@ -6,8 +6,12 @@ function createPrismaClient() {
   // Use unpooled for migrations/transactions; fall back to pooler for normal queries
   const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || ''
 
-  // Strip ?sslmode=require — we pass SSL via the pool config instead
-  const cleanUrl = connectionString.replace(/[?&]sslmode=\w+/g, '').replace(/\?$/, '')
+  // Strip params that cause issues — we pass SSL via pool config instead
+  const cleanUrl = connectionString
+    .replace(/[?&]sslmode=\w+/g, '')
+    .replace(/[?&]channel_binding=\w+/g, '')
+    .replace(/\?$/, '')
+    .replace(/\?&/, '?')
 
   const pool = new Pool({
     connectionString: cleanUrl,
